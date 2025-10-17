@@ -1,0 +1,186 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(uuid())
+  name          String
+  email         String
+  emailVerified Boolean   @default(false)
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @default(now()) @updatedAt
+  username      String?   @unique
+  bio           String?
+  avatar        String?
+  sessions      Session[]
+  accounts      Account[]
+  tweets        Tweet[]
+  likes         Like[]
+  retweets      Retweet[]
+  followers     Follow[]  @relation("UserFollowers")
+  following     Follow[]  @relation("UserFollowing")
+  notifications Notification[] @relation("NotificationRecipient")
+  notificationsActed Notification[] @relation("NotificationActor")
+
+  @@unique([email])
+  @@index([username])
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now()) @updatedAt
+
+  @@map("verification")
+}
+
+model Tweet {
+  id String @id @default(uuid())
+  content String
+  imageUrl String?
+  authorId String @map("authorId")
+  parentId String? @map("parentId")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now()) @updatedAt
+  likes    Like[]
+  retweets    Retweet[]
+  notifications Notification[]
+
+  author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  parent Tweet? @relation("TweetReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies Tweet[] @relation("TweetReplies")
+
+  @@index([createdAt]) // getTweets()
+  @@index([authorId]) // getUserTweets()
+  @@index([parentId]) // replies
+  @@index([authorId, createdAt])
+
+  @@map("tweets")
+}
+
+model Like {
+  id String @id @default(uuid())
+  userId String @map("userId")
+  tweetId String @map("tweetId")
+  createdAt DateTime @default(now())
+
+  tweet Tweet @relation(fields: [tweetId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, tweetId])
+  @@index([tweetId])
+  @@index([userId])
+  @@index([userId, createdAt])
+  @@map("likes")
+}
+
+
+model Retweet {
+  id String @id @default(uuid())
+  userId String @map("userId")
+  tweetId String @map("tweetId")
+  createdAt DateTime @default(now())
+
+  tweet Tweet @relation(fields: [tweetId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, tweetId])
+  @@index([tweetId])
+  @@index([userId])
+  @@index([userId, createdAt])
+  @@map("retweets")
+}
+
+model Follow {
+  id String @id @default(uuid())
+  followingId String @map("followingId")
+  followerId String @map("followerId")
+  createdAt DateTime @default(now())
+
+  following User @relation("UserFollowing", fields: [followingId], references: [id], onDelete: Cascade)
+  follower User @relation("UserFollowers",fields: [followerId], references: [id], onDelete: Cascade)
+
+  @@unique([followingId, followerId])
+  @@index([followingId])
+  @@index([followerId])
+  @@map("follows")
+}
+
+enum NotificationType {
+  LIKE
+  RETWEET
+  REPLY
+  FOLLOW
+}
+
+model Notification {
+  id String @id @default(uuid())
+  type NotificationType
+  read Boolean @default(false)
+  createdAt DateTime @default(now())
+
+  // Relations
+  recipientId String @map("recipientId")
+  actorId String @map("actorId")
+  tweetId String? @map("tweetId")
+
+  recipient User @relation("NotificationRecipient", fields: [recipientId], references: [id], onDelete: Cascade)
+  actor User @relation("NotificationActor",fields: [actorId], references: [id], onDelete: Cascade)
+  tweet Tweet? @relation(fields: [tweetId], references: [id], onDelete: Cascade)
+
+  @@index([recipientId])
+  @@index([recipientId, read])
+  @@index([recipientId, createdAt])
+  @@map("notifications")
+}
