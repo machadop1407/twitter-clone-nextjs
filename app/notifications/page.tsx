@@ -3,7 +3,7 @@ import NotificationObserver from "@/components/notifications/notification-observ
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getNotifications } from "@/lib/actions/notifications";
 import { formatTimeAgo } from "@/lib/format-tweet-date";
-import { NotificationType } from "@/lib/generated/prisma";
+import { NotificationType } from "@prisma/client";
 import { getInitials } from "@/lib/get-initials";
 import { Heart, MessageCircle, Repeat2, UserPlus } from "lucide-react";
 import Link from "next/link";
