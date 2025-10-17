@@ -15,17 +15,6 @@ import { Chrome } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import type { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "Sign Up",
-  description:
-    "Join Twitter today! Create your account and start sharing your thoughts with the world.",
-  robots: {
-    index: false,
-    follow: false,
-  },
-};
 
 export default function SignUp() {
   const [formData, setFormData] = useState({

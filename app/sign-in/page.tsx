@@ -13,17 +13,6 @@ import { signInWithEmail, signInWithGoogle } from "@/lib/auth/auth-actions";
 import { Chrome } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-import type { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "Sign In",
-  description:
-    "Sign in to your Twitter account to start sharing your thoughts and connecting with others.",
-  robots: {
-    index: false,
-    follow: false,
-  },
-};
 
 export default function SignIn() {
   const [formData, setFormData] = useState({
