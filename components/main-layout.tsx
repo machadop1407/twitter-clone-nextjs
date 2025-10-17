@@ -13,7 +13,7 @@ export default function MainLayout({
       </main>
       <div className="w-80 border-l border-border bg-background p-6">
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold">What's happening</h3>
+          <h3 className="text-lg font-semibold">What&apos;s happening</h3>
           <div className="space-y-3">
             <div className="p-4 border border-border rounded-lg">
               <p className="text-sm text-muted-foreground">

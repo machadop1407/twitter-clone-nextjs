@@ -97,7 +97,7 @@ export default async function ProfilePage({
         <div className="p-8 text-center">
           <h1 className="text-2xl font-bold text-red-500">User not found</h1>
           <p className="text-muted-foreground mt-2">
-            The user you're looking for doesn't exist.
+            The user you&apos;re looking for doesn&apos;t exist.
           </p>
         </div>
       </MainLayout>

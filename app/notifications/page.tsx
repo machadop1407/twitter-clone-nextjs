@@ -76,8 +76,8 @@ export default async function NotificationsPage() {
           </div>
           <h2 className="text-xl font-semibold mb-2">No notifications yet</h2>
           <p className="text-muted-foreground">
-            When someone likes, retweets, or replies to your tweets, you'll see
-            it here.
+            When someone likes, retweets, or replies to your tweets, you&apos;ll
+            see it here.
           </p>
         </div>
       ) : (

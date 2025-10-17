@@ -1,7 +1,7 @@
 "use server";
 import { redirect } from "next/navigation";
 import { getSession } from "../auth/auth-actions";
-import { NotificationType } from "../generated/prisma";
+import { NotificationType } from "@prisma/client";
 import { prisma } from "../prisma";
 import { revalidateTag, unstable_cache } from "next/cache";
 
